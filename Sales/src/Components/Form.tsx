@@ -17,7 +17,7 @@ const schema = z.object({
     spend: z.number({ invalid_type_error: "spend is Required" })
         .min(0, { message: "Spend Must be more than or equal to 0" }),
 })
-type Post = z.infer<typeof schema>
+
 const Form = () => {
     const { register, handleSubmit, formState: { errors, isValid, isSubmitting }, reset } = useForm({ resolver: zodResolver(schema) })
 

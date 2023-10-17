@@ -207,7 +207,6 @@ export const postMetric = async (req: Metrics): Promise<Metrics> => {
 													reject(commitErr);
 												} else {
 													resolve(rowData);
-													close()
 												}
 											});
 										}

@@ -1,57 +1,92 @@
-import { useForm } from 'react-hook-form'
+import { FieldValues, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 const schema = z.object({
-    campaignName: z.string({ invalid_type_error: "Campaign Name is Required"}),
-    impressions: z.number({ invalid_type_error: "impressions is Required",})
-        .min(0, { message: " Impression Must be more than or equl to 0 " }),
+    campaignName: z.string().refine((value) => value.trim() !== '', {
+        message: "Campaign Name is Required",
+    }),
+    impressions: z.number({ invalid_type_error: "impressions is Required", })
+        .min(0, { message: " Impression Must be more than or equal to 0 " }),
     clicks: z.number({
-        invalid_type_error: "clicks is Required" })
-        .min(0, { message: " Clicks Must be more than or equl to 0 " }),
-    conversions: z.number({  invalid_type_error: "conversions is Required" })
-        .min(0, { message: "Conversion Impression Must be more than or equl to 0 " }),
-    spend: z.number({invalid_type_error: "spend is Required" })
-        .min(0, { message: "Spend Must be more than or equl to 0" }),
+        invalid_type_error: "clicks is Required"
+    })
+        .min(0, { message: " Clicks Must be more than or equal to 0 " }),
+    conversions: z.number({ invalid_type_error: "conversions is Required" })
+        .min(0, { message: "Conversion Impression Must be more than or equal to 0 " }),
+    spend: z.number({ invalid_type_error: "spend is Required" })
+        .min(0, { message: "Spend Must be more than or equal to 0" }),
 })
+type Post = z.infer<typeof schema>
 const Form = () => {
-    const { register, handleSubmit, formState: { errors, isValid, isSubmitting } } = useForm({ resolver: zodResolver(schema) })
+    const { register, handleSubmit, formState: { errors, isValid, isSubmitting }, reset } = useForm({ resolver: zodResolver(schema) })
+
+    const Submit = (data: FieldValues) => {
+        console.log(data)
+           fetch("/metrics",{
+               method: "POST",
+               headers: {
+                   "Content-Type": "application/json",
+               },
+               body: JSON.stringify(data)
+           })
+
+            reset()
+    }
+
     return (
         <>
-        <h3>Sales Metrics  </h3>
-        <form onSubmit={handleSubmit(data => console.log(data))}>
-            <div>
-                <label htmlFor="campaignName" className="form-label"> Campaign Name </label>
-                <input {...register("campaignName", { required: "Campaign Name is required" })} 
-                id="campaignName" type="text" />
-                {errors.campaignName && <p>{errors.campaignName.message?.toString()} </p>}
-            </div>
-            <div>
-                <label htmlFor="impressions" className="form-label"> Impressions</label>
-                <input {...register("impressions", { required: true, valueAsNumber: true })} 
-                id='impressions' type="number" />
-                {errors.impressions && <p>{errors.impressions.message?.toString()}</p>}
-            </div>
-            <div><label htmlFor="clicks" className="form-label"> Clicks</label>
-                <input {...register("clicks", { required: true, valueAsNumber: true })} 
-            id='clicks' type="number" />
-                {errors.clicks && <p>{errors.clicks.message?.toString()}</p>}
-            </div>
-            <div><label htmlFor="conversions" className="form-label"> Conversions</label>
-                <input {...register("conversions", { required: true, valueAsNumber: true })} 
-            id='conversions' type="number" />
-                {errors.conversions && <p>{errors.conversions.message?.toString()}</p>}
-            </div>
-            <div><label htmlFor="spend" className="form-label"> Spend</label>
-                <input {...register("spend", { required: true, valueAsNumber: true })} 
-            id='spend' type="number" />
-                {errors.spend && <p>{errors.spend.message?.toString()}</p>}
-            </div>
+            <h3 className='text-center text-success'>Sales Metrics  </h3>
+            <div className="container d-flex justify-content-center align-items-center min-vh-90">
+                <form 
+                    onSubmit={handleSubmit((data) => Submit(data))}
+                    className="col-md-6 row g-3">
+                    <div  className='mb-3'>
+                        <label htmlFor="campaignName" className="form-label"> Campaign Name </label>
+                        <input {...register("campaignName", { required: "Campaign Name is required" })}
+                            id="campaignName" type="text"
+                            className='form-control'
+                        />
+                        {errors.campaignName && <p className='text-danger'>{errors.campaignName.message?.toString()} </p>}
+                    </div>
+                    <div className='mb-3 col-md-3'>
+                        <label htmlFor="impressions" className="form-label"> Impressions</label>
+                        <input {...register("impressions", { required: true, valueAsNumber: true })}
+                            id='impressions' type="number"
+                            className='form-control'
+                        />
+                        {errors.impressions && <p className='text-danger'>{errors.impressions.message?.toString()}</p>}
+                    </div>
+                    <div  className='mb-3 col-md-3'>
+                        <label htmlFor="clicks" className="form-label"> Clicks</label>
+                        <input {...register("clicks", { required: true, valueAsNumber: true })}
+                            id='clicks' type="number"
+                            className='form-control'
+                        />
+                        {errors.clicks && <p className='text-danger'>{errors.clicks.message?.toString()}</p>}
+                    </div>
+                    <div className='mb-3 col-md-3'>
+                        <label htmlFor="conversions" className="form-label"> Conversions</label>
+                        <input {...register("conversions", { required: true, valueAsNumber: true })}
+                            id='conversions' type="number"
+                            className='form-control'
+                        />
+                        {errors.conversions && <p className='text-danger'>{errors.conversions.message?.toString()}</p>}
+                    </div>
+                    <div className='mb-3 col-md-3'>
+                        <label htmlFor="spend" className="form-label"> Spend</label>
+                        <input {...register("spend", { required: true, valueAsNumber: true })}
+                            id='spend' type="number"
+                            className='form-control'
+                        />
+                        {errors.spend && <p className='text-danger'>{errors.spend.message?.toString()}</p>}
+                    </div>
 
-            <div>
-                    <button disabled={!isValid} type="submit">{isSubmitting ? "Submiting" : "Submit"}</button> 
+                    <div className='mb-3'>
+                        <button disabled={!isValid} type="submit" className="btn btn-primary">{isSubmitting ? "Submiting" : "Submit"}</button>
+                    </div>
+                </form>
             </div>
-        </form>
         </>
     )
 }

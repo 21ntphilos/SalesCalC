@@ -1,13 +1,13 @@
 
 import './App.css'
-import Form from './Form'
+import Form from './Components/Form'
 
 function App() {
 
 
   return (
     <>
-          <h1>HELLO PEOPLE  </h1>
+          <h1>Loopify  </h1>
           <Form/>
     </>
   )

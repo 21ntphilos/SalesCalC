@@ -7,7 +7,6 @@ const schema = z.object({
     impressions: z.number({ invalid_type_error: "impressions is Required",})
         .min(0, { message: " Impression Must be more than or equl to 0 " }),
     clicks: z.number({
-        // invalid_type_error: "expected a Number", 
         invalid_type_error: "clicks is Required" })
         .min(0, { message: " Clicks Must be more than or equl to 0 " }),
     conversions: z.number({  invalid_type_error: "conversions is Required" })
@@ -16,7 +15,7 @@ const schema = z.object({
         .min(0, { message: "Spend Must be more than or equl to 0 " }),
 })
 const Form = () => {
-    const { register, handleSubmit, formState: { errors, } } = useForm({ resolver: zodResolver(schema) })
+    const { register, handleSubmit, formState: { errors, isValid, isSubmitting } } = useForm({ resolver: zodResolver(schema) })
     return (
         <>
         <h1>Sales Metrics  </h1>
@@ -45,7 +44,7 @@ const Form = () => {
             </div>
 
             <div>
-                <input type="submit" />
+                    <button disabled={!isValid} type="submit">{isSubmitting ? "Submiting" : "Submit"}</button> 
             </div>
         </form>
         </>

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import {SERVER} from '../config/config'
 
 type Metric = {
     id: number
@@ -17,7 +16,7 @@ const Metric = () => {
     const [metrics, setMetrics] = useState<Metric[]>([])
 
     useEffect(() => {
-        fetch(SERVER)
+        fetch("https://server-hlcj.onrender.com/metric")
             .then(response => response.json())
             .then(data => {
                 setMetrics(data)

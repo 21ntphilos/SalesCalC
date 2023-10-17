@@ -1,31 +1,36 @@
 import express,{Request, Response, NextFunction} from 'express'
-import {port} from './config'
-import { config } from 'process'
+import { port, CLIENT } from "./config";
+import {post, allMetrics} from './Controllers'
+import cors from 'cors'
 
 const app = express()
+app.use(cors({origin: CLIENT}))
 app.use(express.json());
-app.post('/metrics', (req: Request, res: Response, next:NextFunction) => {
-  try {
-    
+app.use(express.urlencoded({ extended: true }));
 
-  } catch (error) {
-    next(error)
-  }
-    
-})
-
-app.get("/metrics", (req: Request, res: Response, next: NextFunction) => {
+// Routes
+app.get("/", async (req: Request, res: Response, next: NextFunction) => {
 	try {
+		res.status(201).json({
+			Message: "WELCOME TO SALES"
+		});
 	} catch (error) {
 		next(error);
 	}
 });
 
-app.post("/metrics", (error: Error, req: Request, res: Response, next: NextFunction) => {
-	try {
-	} catch (error) {
-		next(error);
-	}
+app.post('/metric', post)
+app.get("/metrics", allMetrics);
+app.get("/metric/:id", );
+
+
+app.use("/", (error: Error, req: Request, res: Response) => {
+  
+    res.status(400).json({
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
 });
 
-app.listen(Port, ()=> console.log(`Server Listening At Port ${Port}`))
+app.listen(port, ()=> console.log(`Server Listening At Port ${port}`))

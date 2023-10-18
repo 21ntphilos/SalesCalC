@@ -101,7 +101,7 @@ export interface Metrics {
 }
 
 export const port = 5222;
-export const CLIENT = process.env.CLIENT!
+export const CLIENT = process.env.CLIENT as string
 const sqlite = sqlite3.verbose();
 
 

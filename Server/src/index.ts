@@ -4,7 +4,7 @@ import {post, allMetrics} from './Controllers'
 import cors from 'cors'
 
 const app = express()
-app.use(cors({origin: CLIENT}))
+app.use(cors({ origin: "https://salesmetric.vercel.app/" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,6 +31,7 @@ app.use("/", (error: Error, req: Request, res: Response) => {
       stack: error.stack,
       name: error.name
     });
+
 });
 
 app.listen(port, ()=> console.log(`Server Listening At Port ${port}`))

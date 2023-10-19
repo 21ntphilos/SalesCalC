@@ -26,7 +26,7 @@ app.get("/metric/:id", );
 
 app.use("/", (error: Error, req: Request, res: Response) => {
   
-    res.status(400).json({
+   return  res.status(400).json({
       message: error.message,
       stack: error.stack,
       name: error.name

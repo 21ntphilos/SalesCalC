@@ -105,7 +105,8 @@ export const CLIENT = process.env.CLIENT as string
 const sqlite = sqlite3.verbose();
 
 
-	const db: sqlite3.Database = new sqlite.Database(
+	export function dbInit (): sqlite3.Database{
+		const db: sqlite3.Database = new sqlite.Database(
 	"/Users/temi/Documents/GitHub/SalesCalC/Server/db.db",
 	(error) => {
 		if (error) {
@@ -115,7 +116,7 @@ const sqlite = sqlite3.verbose();
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Metrics (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        campaignName VARCHAR(100) NOT NULL UNIQUE,
+        campaignName VARCHAR(100) NOT NULL ,
         impressions INTEGER NOT NULL,
         clicks INTEGER NOT NULL,
         conversions INTEGER NOT NULL,
@@ -132,10 +133,18 @@ const sqlite = sqlite3.verbose();
 		}
 	}
 );
+		return db;
+}
 
-// API endpoint to interact with SQLite
+const close = async(db: sqlite3.Database)=>{
+
+	await db.close((error: Error| null)=>{
+		if (error) throw error.message
+		console.log("Database connection Closed.")
+	})
+}
 export const getMetrics = async (): Promise<Metrics[]> => {
-	
+	const db = dbInit()
 	return new Promise<Metrics[]>((resolve, reject) => {
 		db.all("SELECT * FROM Metrics", (err: Error | null, data: Metrics[]) => {
 			if (err) {
@@ -144,11 +153,13 @@ export const getMetrics = async (): Promise<Metrics[]> => {
 			} else {
 				resolve(data);
 			}
+			close(db)
 		});
 	});
 };
 
 export const getMetricsById = async (id: number): Promise<Metrics[]> => {
+	const db = dbInit();
 	return new Promise<Metrics[]>((resolve, reject) => {
 		db.all(
 			"SELECT * FROM Metrics WHERE id = ?",
@@ -168,6 +179,7 @@ export const getMetricsById = async (id: number): Promise<Metrics[]> => {
 export const postMetric = async (req: Metrics): Promise<Metrics> => {
 	const { campaignName, impressions, clicks, conversions, spend } = req;
 
+	const db = dbInit();
 	try {
 		// Start a transaction
 		return await new Promise((resolve, reject) => {
@@ -206,15 +218,17 @@ export const postMetric = async (req: Metrics): Promise<Metrics> => {
 													console.error(commitErr.message);
 													reject(commitErr);
 												} else {
+													
 													resolve(rowData);
 												}
 											});
 										}
 									}
-								);
-							}
+									);
+								}
 						}
 					);
+					close(db);
 				});
 			});
 		});

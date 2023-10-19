@@ -1,9 +1,12 @@
 import express,{Request, Response, NextFunction} from 'express'
-import { port, CLIENT } from "./config";
+import { port,dbInit } from "./config";
 import {post, allMetrics} from './Controllers'
 import cors from 'cors'
 
 const app = express()
+
+dbInit()
+
 app.use(cors({ origin: "https://salesmetric.vercel.app/" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

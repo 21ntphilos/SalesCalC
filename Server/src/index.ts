@@ -24,14 +24,15 @@ app.get("/metrics", allMetrics);
 app.get("/metric/:id", );
 
 
-app.use("/", (error: Error, req: Request, res: Response) => {
-  
-   return  res.status(400).json({
-      message: error.message,
-      stack: error.stack,
-      name: error.name
-    });
-
-});
+app.use(
+	"/",
+	(error: Error, req: Request, res: Response, next: NextFunction) => {
+		return res.status(400).json({
+			message: error.message,
+			stack: error.stack,
+			name: error.name,
+		});
+	}
+);
 
 app.listen(port, ()=> console.log(`Server Listening At Port ${port}`))

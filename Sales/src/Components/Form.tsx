@@ -1,6 +1,7 @@
-import { FieldValues, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+
 
 const schema = z.object({
     campaignName: z.string().refine((value) => value.trim() !== '', {
@@ -18,20 +19,17 @@ const schema = z.object({
         .min(0, { message: "Spend Must be more than or equal to 0" }),
 })
 type Post = z.infer<typeof schema>
-const Form = () => {
+interface prop{
+    setDisplay:(data:Post)=>void,
+}
+
+const Form = ({ setDisplay }: prop) => {
     const { register, handleSubmit, formState: { errors, isValid, isSubmitting }, reset } 
     = useForm<Post>({ resolver: zodResolver(schema) });
 
-    const Submit = (data: FieldValues) => {
+    const Submit = (data: Post) => {
         console.log(data)
-           fetch("/metrics",{
-               method: "POST",
-               headers: {
-                   "Content-Type": "application/json",
-               },
-               body: JSON.stringify(data)
-           })
-
+        setDisplay(data)
             reset()
     }
 

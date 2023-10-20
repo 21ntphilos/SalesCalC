@@ -1,48 +1,25 @@
-import { useEffect, useState } from "react"
+import { useState } from "react";
+import { Campaign } from "./../App"
 
-type Metric = {
-    id: number
-    campaignName: string,
-    clickThroughRate: number,
-    conversionRate: number,
-    costPerClick: number,
-    costPerConversion: number,
+
+
+interface prop {
+    metrics: Campaign[],
 }
 
+const Metric = ({ metrics }: prop) => {
+    const [Display, setDisplay] = useState<boolean>(false)
+
+    if (metrics.length === 0 || Display === false) return <div className="d-flex justify-content-center">
+        <button className="btn btn-success mb-3 text-center"
+            onClick={() => setDisplay(true)}>Display Campaign Metrics</button>
+    </div>
 
 
-const Metric = () => {
-// 
-    // const [metrics, setMetrics] = useState<Metric[]>([])
-    const [metrics, setMetrics] = useState<any[]>([])
-
-    // useEffect(() => {
-    //     fetch("https://server-hlcj.onrender.com/metric")
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             setMetrics(data)
-    //         })
-    // }, [])
-
-    const HandleClick = () => {
-        // "https://jsonplaceholder.typicode.com/users/1/todos"
-        // "https://server-hlcj.onrender.com/metric"
-        fetch("https://jsonplaceholder.typicode.com/users")
-            .then(response => response.json())
-            .then(data => {
-                setMetrics(data)
-                console.log(data)
-            })
-
-    }
-
-    if (metrics.length === 0) return <button 
-    className="btn btn-success" 
-    onClick = {HandleClick}>Display Campaign Metrics</button>
 
     return (
         <>
-            <table className="table table-border">
+            <table className="table table-border container">
                 <thead>
                     <tr key={"head"}>
                         <td className="fw-bold">Campaign Name</td>
@@ -55,27 +32,23 @@ const Metric = () => {
                 </thead>
                 <tbody>
                     {
-                        //   metrics.map(ex => <tr key={ex.id}>
-                        //       <td>{ex.campaignName}</td>
-                        //       <td>{ex.clickThroughRate}</td>
-                        //       <td>{ex.conversionRate}</td>
-                        //       <td>{ex.costPerClick}</td>
-                        //         <td>{ex.costPerConversion}</td>
-
-                        //   </tr> 
-                        //   )
                         metrics.map(ex => <tr key={ex.id}>
-                            <td >{ex.name}</td>
-                            <td >{ex.username}</td>
-                            <td >{ex.email}</td>
-                            <td >{ex.address.city}</td>
-                            <td >{ex.company.name}</td>
+                            <td>{ex.campaignName}</td>
+                            <td>{((ex.clicks / ex.impressions) * 100).toFixed(2)}</td>
+                            <td>{((ex.conversions / ex.clicks) * 100).toFixed(2)}</td>
+                            <td>{ex.spend / ex.clicks}</td>
+                            <td>{ex.spend / ex.conversions}</td>
 
                         </tr>
                         )
+
                     }
                 </tbody>
             </table>
+            <div className="d-flex justify-content-center">
+                <button className="btn btn-success mb-3 text-center"
+                    onClick={() => setDisplay(false)}>Hide Campaign Metrics</button>
+            </div>
         </>
     )
 }
